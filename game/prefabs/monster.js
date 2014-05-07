@@ -14,7 +14,7 @@ var Monster = function(game, x, y, sprite) {
   this.input.useHandCursor = true;
 
   this.chain = 0;
-  this.chainValue = 3;
+  this.chainValue = 10;
 
   this.events.onInputDown.add(this.jump, this);
 };
@@ -28,7 +28,7 @@ Monster.prototype.update = function() {
 
 Monster.prototype.jump = function() { 
   if(this.body.touching.down){
-  	this.body.velocity.y = -400;
+  	this.body.velocity.y = -200;
   }
 };
 

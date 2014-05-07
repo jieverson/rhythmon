@@ -23,16 +23,16 @@ Preload.prototype = {
     this.load.image('ground', 'assets/images/ground.jpg');
     this.load.image('note', 'assets/images/note.png');
 
-    this.load.audio('note1', 'assets/sounds/BeatVoidTone_1.ogg');
-    this.load.audio('note2', 'assets/sounds/BeatVoidTone_2.ogg');
-    this.load.audio('note3', 'assets/sounds/BeatVoidTone_3.ogg');
-    this.load.audio('note4', 'assets/sounds/BeatVoidTone_4.ogg');
-    this.load.audio('note5', 'assets/sounds/BeatVoidTone_5.ogg');
-    this.load.audio('note6', 'assets/sounds/BeatVoidTone_6.ogg');
-    this.load.audio('note7', 'assets/sounds/BeatVoidTone_7.ogg');
-    this.load.audio('miss', 'assets/sounds/BeatMiss.ogg');
+    this.load.audio('note1', 'assets/sounds/BeatVoidTone_1.mp3');
+    this.load.audio('note2', 'assets/sounds/BeatVoidTone_2.mp3');
+    this.load.audio('note3', 'assets/sounds/BeatVoidTone_3.mp3');
+    this.load.audio('note4', 'assets/sounds/BeatVoidTone_4.mp3');
+    this.load.audio('note5', 'assets/sounds/BeatVoidTone_5.mp3');
+    this.load.audio('note6', 'assets/sounds/BeatVoidTone_6.mp3');
+    this.load.audio('note7', 'assets/sounds/BeatVoidTone_7.mp3');
+    this.load.audio('miss', 'assets/sounds/BeatMiss.mp3');
 
-    this.load.audio('theme', 'assets/musics/Main_Theme_01.ogg');
+    this.load.audio('theme', 'assets/musics/Main_Theme_01.mp3');
 
     this.load.bitmapFont('customfont', 'assets/fonts/flappyfont.png', 'assets/fonts/flappyfont.fnt');
 
