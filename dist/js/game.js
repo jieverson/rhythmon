@@ -15,7 +15,42 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":7,"./states/gameover":8,"./states/menu":9,"./states/play":10,"./states/preload":11}],2:[function(require,module,exports){
+},{"./states/boot":8,"./states/gameover":9,"./states/menu":10,"./states/play":11,"./states/preload":12}],2:[function(require,module,exports){
+'use strict';
+
+var LifeMeter = function(game) {
+  Phaser.Group.call(this, game);
+  
+  this.lifes = 5;
+
+  for(var i = 0; i < this.lifes; i++){
+  	var life = this.create(this.game.width - 60, (70 * (i + 1)), 'lifes');
+  	life.anchor.setTo(0.5, 0.5);
+  }
+};
+
+LifeMeter.prototype = Object.create(Phaser.Group.prototype);
+LifeMeter.prototype.constructor = LifeMeter;
+
+LifeMeter.prototype.update = function() {
+  
+  // write your prefab's specific update code here
+  
+};
+
+LifeMeter.prototype.damage = function(){
+  if(this.lifes > 0){
+	this.lifes--;
+	this.getAt(this.lifes).frame = 1;
+  }
+  else{
+	this.game.state.start('gameover');
+  }
+};
+
+module.exports = LifeMeter;
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var Ground = function(game, x, y, width, height) {  
@@ -37,7 +72,7 @@ Ground.prototype.update = function() {
 
 module.exports = Ground;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var Hit = function(game, x, y, message) {
@@ -59,11 +94,11 @@ Hit.prototype.update = function() {
 
 module.exports = Hit;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var Miss = function(game, x, y) {
-  Phaser.BitmapText.call(this, game, x, y, 'customfont', 'miss', 48);
+  Phaser.BitmapText.call(this, game, x, y, 'customfont', 'miss', 32);
 	
   this.life = 20;
 };
@@ -72,7 +107,7 @@ Miss.prototype = Object.create(Phaser.BitmapText.prototype);
 Miss.prototype.constructor = Miss;
 
 Miss.prototype.update = function() {
-  this.position.y += 5;
+  this.position.y += 3;
 
   if(this.life-- == 0){
 	this.destroy();
@@ -81,24 +116,32 @@ Miss.prototype.update = function() {
 
 module.exports = Miss;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
-var Monster = function(game, x, y, sprite) {
+var Monster = function(game, x, y, sprite, frames_count1, frames_count2, frames_count3) {
   Phaser.Sprite.call(this, game, x, y, sprite);
 
   this.anchor.setTo(0.5, 0.5);
 
-  this.animations.add('default', [0, 1, 2, 3]);
-  this.animations.play('default', 12, true);
+  var frames1 = Array.apply(null, {length: frames_count1}).map(function (empty, index) { return index; });
+  this.animations.add('evolution1', frames1);
+
+  var frames2 = Array.apply(null, {length: frames_count2}).map(function (empty, index) { return 15 + index; });
+  this.animations.add('evolution2', frames2);
+
+  var frames3 = Array.apply(null, {length: frames_count3}).map(function (empty, index) { return 30 + index; });
+  this.animations.add('evolution3', frames3);
+
+  this.animations.play('evolution1', 7, true);
 
   this.game.physics.arcade.enableBody(this);
 
   this.inputEnabled = true;
   this.input.useHandCursor = true;
 
-  this.chain = 0;
-  this.chainValue = 10;
+  this.level = 0;
+  this.evolution = 1;
 
   this.events.onInputDown.add(this.jump, this);
 };
@@ -116,14 +159,23 @@ Monster.prototype.jump = function() {
   }
 };
 
+Monster.prototype.checkIfShouldEvolve = function() { 
+  return (this.level == 10 && this.evolution == 1) || (this.level == 20 && this.evolution == 2);
+};
+
+Monster.prototype.evolve = function() {
+  this.evolution++;
+  this.animations.play('evolution' + this.evolution, 7, true);
+};
+
 module.exports = Monster;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
-var Note = function(game, x, y, frame) {
-  Phaser.Sprite.call(this, game, x, y, 'note', frame);
-  this.randomSetUp();
+var Note = function(game, x, y, noteType) {
+  Phaser.Sprite.call(this, game, x, y, 'notes', noteType);
+  this.sound = this.game.notesSounds[noteType];
 
   this.anchor.setTo(0.5, 0.5);
   
@@ -136,16 +188,12 @@ Note.prototype.constructor = Note;
 Note.prototype.update = function() {
   
   // write your prefab's specific update code here
-  
-};
-
-Note.prototype.randomSetUp = function(){
-	this.sound = this.game.rnd.pick(this.game.notesSounds);
+  this.rotation -= 0.005;
 };
 
 module.exports = Note;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 'use strict';
 
@@ -164,7 +212,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 'use strict';
 function GameOver() {}
@@ -192,7 +240,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 'use strict';
 function Menu() {}
@@ -224,11 +272,12 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
   'use strict';
   var Monster = require('../prefabs/monster');
   var Note = require('../prefabs/note');
+  var LifeMeter = require('../prefabs/LifeMeter');
   var Ground = require('../prefabs/ground');
   var Hit = require('../prefabs/hit');
   var Miss = require('../prefabs/miss');
@@ -254,11 +303,13 @@ module.exports = Menu;
       this.ground = new Ground(this.game, 0, this.game.height - 100, this.game.width, 100);
       this.game.add.existing(this.ground);
 
-      this.monsters.add(new Monster(this.game, this.game.width/4, this.game.height - 200, 'monster1'));
-      this.monsters.add(new Monster(this.game, this.game.width/2, this.game.height - 200, 'monster2'));
-      this.monsters.add(new Monster(this.game, this.game.width/4 + this.game.width/2, this.game.height - 200, 'monster3'));
+      this.monsters.add(new Monster(this.game, this.game.width / 5, this.game.height - 200, 'monster1', 12, 15, 11));
+      this.monsters.add(new Monster(this.game, this.game.width / 2, this.game.height - 200, 'monster2', 13, 13, 9));
+      this.monsters.add(new Monster(this.game, this.game.width - this.game.width / 5, this.game.height - 200, 'monster3', 13, 10, 14));
 
       this.texts = this.game.add.group();
+
+      this.lifes = new LifeMeter(this.game);
 
       this.score = 0;
       this.scoreText = this.game.add.bitmapText(this.game.width/2, 10, 'customfont',this.score.toString(), 64);
@@ -280,77 +331,79 @@ module.exports = Menu;
       this.musicGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 0.1, this.generateNote, this);
       this.musicGenerator.timer.start();
     },
+
     update: function() {
       this.background.rotation -= 0.005;
       this.game.physics.arcade.collide(this.monsters, this.ground);
       this.game.physics.arcade.collide(this.monsters, this.notes, null, this.hitNote, this);
       this.game.physics.arcade.collide(this.notes, this.ground, null, this.missNote, this);
     },
+
     generateNote: function() {
       if(!this.generateNoteAux){
         if(this.score < 20)
-          this.generateNoteAux = this.game.rnd.pick([5, 5, 10, 10, 15, 20]);
+          this.generateNoteAux = this.game.rnd.pick([5, 10, 15, 20]);
         else if(this.score < 50)
-          this.generateNoteAux = this.game.rnd.pick([2, 5, 5, 5, 10, 10, 15]);
+          this.generateNoteAux = this.game.rnd.pick([2, 5, 5, 5, 10, 10, 10, 10, 15, 15, 20]);
         else if(this.score < 100)
-          this.generateNoteAux = this.game.rnd.pick([2, 2, 5, 5, 5, 10]);
+          this.generateNoteAux = this.game.rnd.pick([2, 2, 5, 5, 5, 5, 5, 10, 10, 10, 15]);
+        else if(this.score < 200)
+          this.generateNoteAux = this.game.rnd.pick([2, 5, 5, 5, 10]);
         else
           this.generateNoteAux = this.game.rnd.pick([2, 5]);
       };
       this.generateNoteAux--;
       if(this.generateNoteAux == 0){
         this.generateNoteAux = null;
-        var x = this.game.rnd.pick([this.game.width/4, this.game.width/2, this.game.width/4 + this.game.width/2]);
-        this.notes.add(new Note(this.game, x, 0));
+        var x = this.game.rnd.pick([this.game.width / 5, this.game.width / 2, this.game.width - this.game.width / 5]);
+        this.notes.add(new Note(this.game, x, 0, this.game.rnd.integerInRange(0,6)));
       }
     },
+
     hitNote: function(monster, note){
       if(!monster.body.touching.down){
         note.sound.play();
 
-        if(monster.chain > monster.chainValue){
-          this.score += 3;
-          this.texts.add(new Hit(this.game, note.position.x - 25, note.position.y + 100, '3x'));
-        }
-        else{
-          this.score += 1;
-          this.texts.add(new Hit(this.game, note.position.x - 25, note.position.y + 100, 'hit'));
-        }
+        this.score += monster.evolution;
+        this.texts.add(new Hit(this.game, note.position.x - 25, note.position.y + 100, 'x' + monster.evolution));
         this.scoreText.setText(this.score.toString());
-
+       
         note.destroy();
 
-        monster.chain += 1;
-        if(monster.chain == monster.chainValue){
-          var filter = new PIXI.PixelateFilter();
-          filter.size.x = filter.size.y = 10;
-          monster.filters = [filter];
-          this.texts.add(new Hit(this.game, note.position.x - 50, note.position.y + 200, 'chain'));
+        monster.level++;
+        if(monster.checkIfShouldEvolve()){
+          monster.evolve();
+          this.texts.add(new Hit(this.game, note.position.x - 50, note.position.y + 200, 'evolve'));
         }
       }
 
       return false;
     },
+
     missNote: function(ground, note){
       this.missSound.play();
       note.destroy();
       this.texts.add(new Miss(this.game, note.position.x - 50, note.position.y - 50));
+      this.lifes.damage();
 
       for(var i = 0; i < 3; i++){
         var monster = this.monsters.getAt(i);
         if(monster.position.x == note.position.x)
         {
-          monster.chain = 0;
-          monster.filters = null;
+          monster.level = 0;
         }
       }
 
       return false;
+    },
+
+    shutdown: function() {      
+      this.theme.stop();
     }
   };
   
   module.exports = Play;
-},{"../prefabs/ground":2,"../prefabs/hit":3,"../prefabs/miss":4,"../prefabs/monster":5,"../prefabs/note":6}],11:[function(require,module,exports){
+},{"../prefabs/LifeMeter":2,"../prefabs/ground":3,"../prefabs/hit":4,"../prefabs/miss":5,"../prefabs/monster":6,"../prefabs/note":7}],12:[function(require,module,exports){
 
 'use strict';
 function Preload() {
@@ -368,13 +421,14 @@ Preload.prototype = {
     this.game.load.script('abstracFilter', 'js/filters/AbstractFilter.js');
     this.game.load.script('pixalate', 'js/filters/PixelateFilter.js');
 
-    this.load.spritesheet('monster1', 'assets/sprites/thief.png', 128, 192, 16);
-    this.load.spritesheet('monster2', 'assets/sprites/mage.png', 128, 192, 16);
-    this.load.spritesheet('monster3', 'assets/sprites/cleric.png', 128, 192, 16);
+    this.load.spritesheet('monster1', 'assets/sprites/monster1.png', 200, 200, 45);
+    this.load.spritesheet('monster2', 'assets/sprites/monster2.png', 200, 200, 45);
+    this.load.spritesheet('monster3', 'assets/sprites/monster3.png', 200, 200, 45);
+    this.load.spritesheet('notes', 'assets/sprites/notes.png', 64, 64, 25);
+    this.load.spritesheet('lifes', 'assets/sprites/lifes.png', 64, 64, 2);
 
     this.load.image('background', 'assets/images/background.jpg');
     this.load.image('ground', 'assets/images/ground.jpg');
-    this.load.image('note', 'assets/images/note.png');
 
     this.load.audio('note1', 'assets/sounds/BeatVoidTone_1.mp3');
     this.load.audio('note2', 'assets/sounds/BeatVoidTone_2.mp3');

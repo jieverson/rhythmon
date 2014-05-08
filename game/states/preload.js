@@ -15,13 +15,14 @@ Preload.prototype = {
     this.game.load.script('abstracFilter', 'js/filters/AbstractFilter.js');
     this.game.load.script('pixalate', 'js/filters/PixelateFilter.js');
 
-    this.load.spritesheet('monster1', 'assets/sprites/thief.png', 128, 192, 16);
-    this.load.spritesheet('monster2', 'assets/sprites/mage.png', 128, 192, 16);
-    this.load.spritesheet('monster3', 'assets/sprites/cleric.png', 128, 192, 16);
+    this.load.spritesheet('monster1', 'assets/sprites/monster1.png', 200, 200, 45);
+    this.load.spritesheet('monster2', 'assets/sprites/monster2.png', 200, 200, 45);
+    this.load.spritesheet('monster3', 'assets/sprites/monster3.png', 200, 200, 45);
+    this.load.spritesheet('notes', 'assets/sprites/notes.png', 64, 64, 25);
+    this.load.spritesheet('lifes', 'assets/sprites/lifes.png', 64, 64, 2);
 
     this.load.image('background', 'assets/images/background.jpg');
     this.load.image('ground', 'assets/images/ground.jpg');
-    this.load.image('note', 'assets/images/note.png');
 
     this.load.audio('note1', 'assets/sounds/BeatVoidTone_1.mp3');
     this.load.audio('note2', 'assets/sounds/BeatVoidTone_2.mp3');

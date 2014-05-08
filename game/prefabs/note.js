@@ -1,8 +1,8 @@
 'use strict';
 
-var Note = function(game, x, y, frame) {
-  Phaser.Sprite.call(this, game, x, y, 'note', frame);
-  this.randomSetUp();
+var Note = function(game, x, y, noteType) {
+  Phaser.Sprite.call(this, game, x, y, 'notes', noteType);
+  this.sound = this.game.notesSounds[noteType];
 
   this.anchor.setTo(0.5, 0.5);
   
@@ -15,11 +15,7 @@ Note.prototype.constructor = Note;
 Note.prototype.update = function() {
   
   // write your prefab's specific update code here
-  
-};
-
-Note.prototype.randomSetUp = function(){
-	this.sound = this.game.rnd.pick(this.game.notesSounds);
+  this.rotation -= 0.005;
 };
 
 module.exports = Note;
